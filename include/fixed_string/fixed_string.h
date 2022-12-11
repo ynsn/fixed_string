@@ -83,7 +83,8 @@ struct basic_fixed_string {
   constexpr size_type length() const noexcept { return size(); }
   constexpr size_type max_size() const noexcept { return N - 1; }
   constexpr size_type capacity() const noexcept { return N - 1; }
-  constexpr bool empty() const noexcept { return N == 0; }
+  constexpr bool empty() const noexcept { return size() == 0; }
+  constexpr bool empty_type() const noexcept { return N == 0; }
 
   constexpr const_reference operator[](size_type pos) const noexcept { return value[pos]; }
   constexpr reference operator[](size_type pos) noexcept { return value[pos]; }
