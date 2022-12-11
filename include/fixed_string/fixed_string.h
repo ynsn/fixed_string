@@ -35,6 +35,7 @@ struct basic_fixed_string {
   using reverse_iterator = std::reverse_iterator<iterator>;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
+  static constexpr std::size_t type_size = N;
   static constexpr std::size_t npos = view::npos;
 
   constexpr basic_fixed_string() noexcept = default;
@@ -52,7 +53,7 @@ struct basic_fixed_string {
   }
 
   [[nodiscard]] constexpr explicit operator view() const noexcept {
-    return std::string_view(value, length());
+    return view(value, length());
   }
 
   friend constexpr std::ostream &operator<<(std::ostream &os, const basic_fixed_string str) {
@@ -76,7 +77,7 @@ struct basic_fixed_string {
   [[nodiscard]] constexpr const_reverse_iterator crend() const noexcept { return rend(); }
 
   [[nodiscard]] constexpr size_type size() const noexcept {
-    const char *s;
+    const_pointer s;
     for (s = value; *s; ++s);
     return (s - value);
   }
@@ -194,7 +195,7 @@ struct basic_fixed_string {
 
   [[nodiscard]] inline constexpr const T *c_str() const noexcept { return value; }
   [[nodiscard]] inline constexpr const T *data() const noexcept { return value; }
-  [[nodiscard]] inline constexpr std::string_view str() const noexcept { return (std::string_view) *this; }
+  [[nodiscard]] inline constexpr view str() const noexcept { return (view) *this; }
 
   [[nodiscard]] constexpr size_type find(view str, size_type pos = 0) const noexcept {
     while (pos + str.length() <= length()) {
@@ -349,21 +350,77 @@ struct basic_fixed_string {
   [[nodiscard]] constexpr bool contains(value_type c) const noexcept { return find(c) != npos; }
   [[nodiscard]] constexpr bool contains(const_pointer c) const noexcept { return contains(view(c)); }
 
-  T value[N]{0};
+  value_type value[N]{0};
 };
 
 template<std::size_t N>
 struct fixed_string : basic_fixed_string<char, N> {
-  constexpr fixed_string(const char(&str)[N]) : basic_fixed_string<char, N>(str) {}
-  constexpr fixed_string(const basic_fixed_string<char, N> &other) : basic_fixed_string<char, N>(other) {}
+  using basic_fixed_string<char, N>::basic_fixed_string;
 };
 
-template<fixed_string String>
-struct literal {};
+template<std::size_t N>
+fixed_string(const char (&)[N]) -> fixed_string<N>;
+
+template<std::size_t N>
+struct fixed_u8string : basic_fixed_string<char8_t, N> {
+  using basic_fixed_string<char8_t, N>::basic_fixed_string;
+};
+
+template<std::size_t N>
+fixed_u8string(const char8_t (&)[N]) -> fixed_u8string<N>;
+
+template<std::size_t N>
+struct fixed_u16string : basic_fixed_string<char16_t, N> {
+  using basic_fixed_string<char16_t, N>::basic_fixed_string;
+};
+
+template<std::size_t N>
+fixed_u16string(const char16_t (&)[N]) -> fixed_u16string<N>;
+
+template<std::size_t N>
+struct fixed_u32string : basic_fixed_string<char32_t, N> {
+  using basic_fixed_string<char32_t, N>::basic_fixed_string;
+};
+
+template<std::size_t N>
+fixed_u32string(const char32_t (&)[N]) -> fixed_u32string<N>;
+
+template<std::size_t N>
+struct fixed_wstring : basic_fixed_string<wchar_t, N> {
+  using basic_fixed_string<wchar_t, N>::basic_fixed_string;
+};
+
+template<std::size_t N>
+fixed_wstring(const wchar_t (&)[N]) -> fixed_wstring<N>;
 
 namespace literals {
 
-} // namespace literals
+template<basic_fixed_string S> requires std::same_as<typename decltype(S)::value_type, char>
+consteval auto operator ""_fs() noexcept {
+  return fixed_string<decltype(S)::type_size>(S.value);
+}
+
+template<basic_fixed_string S> requires std::same_as<typename decltype(S)::value_type, char8_t>
+consteval auto operator ""_f8() noexcept {
+  return fixed_u8string<decltype(S)::type_size>(S.value);
+}
+
+template<basic_fixed_string S> requires std::same_as<typename decltype(S)::value_type, char16_t>
+consteval auto operator ""_f16() noexcept {
+  return fixed_u16string<decltype(S)::type_size>(S.value);
+}
+
+template<basic_fixed_string S> requires std::same_as<typename decltype(S)::value_type, char32_t>
+consteval auto operator ""_f32() noexcept {
+  return fixed_u32string<decltype(S)::type_size>(S.value);
+}
+
+template<basic_fixed_string S> requires std::same_as<typename decltype(S)::value_type, wchar_t>
+consteval auto operator ""_fw() noexcept {
+  return fixed_wstring<decltype(S)::type_size>(S.value);
+}
+
+} // namespace fixed_string_literals
 
 } // namespace FIXED_STRING_NS
 
