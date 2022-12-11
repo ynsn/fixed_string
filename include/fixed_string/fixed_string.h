@@ -75,8 +75,12 @@ struct basic_fixed_string {
   constexpr const_reverse_iterator crbegin() const noexcept { return rbegin(); }
   constexpr const_reverse_iterator crend() const noexcept { return rend(); }
 
-  constexpr size_type size() const noexcept { return N - 1; }
-  constexpr size_type length() const noexcept { return N - 1; }
+  constexpr size_type size() const noexcept {
+    const char *s;
+    for (s = value; *s; ++s);
+    return (s - value);
+  }
+  constexpr size_type length() const noexcept { return size(); }
   constexpr size_type max_size() const noexcept { return N - 1; }
   constexpr size_type capacity() const noexcept { return N - 1; }
   constexpr bool empty() const noexcept { return N == 0; }
