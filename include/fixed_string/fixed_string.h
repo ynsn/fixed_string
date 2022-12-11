@@ -51,7 +51,7 @@ struct basic_fixed_string {
     return *this;
   }
 
-  constexpr explicit operator view() const noexcept {
+  [[nodiscard]] constexpr explicit operator view() const noexcept {
     return std::string_view(value, length());
   }
 
@@ -60,42 +60,42 @@ struct basic_fixed_string {
     return os;
   }
 
-  constexpr iterator begin() noexcept { return value; }
-  constexpr const_iterator begin() const noexcept { return value; }
-  constexpr iterator end() noexcept { return value + N - 1; }
-  constexpr const_iterator end() const noexcept { return value + N - 1; }
+  [[nodiscard]] constexpr iterator begin() noexcept { return value; }
+  [[nodiscard]] constexpr const_iterator begin() const noexcept { return value; }
+  [[nodiscard]] constexpr iterator end() noexcept { return value + N - 1; }
+  [[nodiscard]] constexpr const_iterator end() const noexcept { return value + N - 1; }
 
-  constexpr reverse_iterator rbegin() noexcept { return reverse_iterator(begin()); }
-  constexpr const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(begin()); }
-  constexpr reverse_iterator rend() noexcept { return reverse_iterator(end()); }
-  constexpr const_reverse_iterator rend() const noexcept { return const_reverse_iterator(end()); }
+  [[nodiscard]] constexpr reverse_iterator rbegin() noexcept { return reverse_iterator(begin()); }
+  [[nodiscard]] constexpr const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(begin()); }
+  [[nodiscard]] constexpr reverse_iterator rend() noexcept { return reverse_iterator(end()); }
+  [[nodiscard]] constexpr const_reverse_iterator rend() const noexcept { return const_reverse_iterator(end()); }
 
-  constexpr const_iterator cbegin() const noexcept { return begin(); }
-  constexpr const_iterator cend() const noexcept { return end(); }
-  constexpr const_reverse_iterator crbegin() const noexcept { return rbegin(); }
-  constexpr const_reverse_iterator crend() const noexcept { return rend(); }
+  [[nodiscard]] constexpr const_iterator cbegin() const noexcept { return begin(); }
+  [[nodiscard]] constexpr const_iterator cend() const noexcept { return end(); }
+  [[nodiscard]] constexpr const_reverse_iterator crbegin() const noexcept { return rbegin(); }
+  [[nodiscard]] constexpr const_reverse_iterator crend() const noexcept { return rend(); }
 
-  constexpr size_type size() const noexcept {
+  [[nodiscard]] constexpr size_type size() const noexcept {
     const char *s;
     for (s = value; *s; ++s);
     return (s - value);
   }
-  constexpr size_type length() const noexcept { return size(); }
-  constexpr size_type max_size() const noexcept { return N - 1; }
-  constexpr size_type capacity() const noexcept { return N - 1; }
-  constexpr bool empty() const noexcept { return size() == 0; }
-  constexpr bool empty_type() const noexcept { return N == 0; }
+  [[nodiscard]] constexpr size_type length() const noexcept { return size(); }
+  [[nodiscard]] constexpr size_type max_size() const noexcept { return N - 1; }
+  [[nodiscard]] constexpr size_type capacity() const noexcept { return N - 1; }
+  [[nodiscard]] constexpr bool empty() const noexcept { return size() == 0; }
+  [[nodiscard]] constexpr bool empty_type() const noexcept { return N == 0; }
 
-  constexpr const_reference operator[](size_type pos) const noexcept { return value[pos]; }
-  constexpr reference operator[](size_type pos) noexcept { return value[pos]; }
+  [[nodiscard]] constexpr const_reference operator[](size_type pos) const noexcept { return value[pos]; }
+  [[nodiscard]] constexpr reference operator[](size_type pos) noexcept { return value[pos]; }
 
-  constexpr const_reference at(size_type pos) const noexcept { return value[pos]; }
-  constexpr reference at(size_type pos) noexcept { return value[pos]; }
+  [[nodiscard]] constexpr const_reference at(size_type pos) const noexcept { return value[pos]; }
+  [[nodiscard]] constexpr reference at(size_type pos) noexcept { return value[pos]; }
 
-  constexpr const_reference front() const noexcept { return value[0]; }
-  constexpr reference front() noexcept { return value[0]; }
-  constexpr const_reference back() const noexcept { return value[size() - 1]; }
-  constexpr reference back() noexcept { return value[size() - 1]; }
+  [[nodiscard]] constexpr const_reference front() const noexcept { return value[0]; }
+  [[nodiscard]] constexpr reference front() noexcept { return value[0]; }
+  [[nodiscard]] constexpr const_reference back() const noexcept { return value[size() - 1]; }
+  [[nodiscard]] constexpr reference back() noexcept { return value[size() - 1]; }
 
   constexpr size_type copy(const basic_fixed_string &dest, size_type count = N, size_type pos = 0) const noexcept {
     if (pos > length())
@@ -121,33 +121,33 @@ struct basic_fixed_string {
   }
 
   template<std::size_t PrefixSize> requires (PrefixSize < N)
-  constexpr basic_fixed_string<T, N - PrefixSize> remove_prefix() const noexcept {
+  [[nodiscard]] constexpr basic_fixed_string<T, N - PrefixSize> remove_prefix() const noexcept {
     basic_fixed_string<T, N - PrefixSize> new_fixed_string;
     copy(new_fixed_string.value, N - PrefixSize, PrefixSize);
     return new_fixed_string;
   }
 
   template<std::size_t SuffixSize> requires (SuffixSize < N)
-  constexpr basic_fixed_string<T, N - SuffixSize> remove_suffix() const noexcept {
+  [[nodiscard]] constexpr basic_fixed_string<T, N - SuffixSize> remove_suffix() const noexcept {
     basic_fixed_string<T, N - SuffixSize> new_fixed_string;
     copy(new_fixed_string.value, N - SuffixSize - 1, 0);
     return new_fixed_string;
   }
 
   template<size_type Pos = 0, size_type Count = npos> requires (Pos + Count < N)
-  constexpr basic_fixed_string<T, Count + 1> substr() const noexcept {
+  [[nodiscard]] constexpr basic_fixed_string<T, Count + 1> substr() const noexcept {
     basic_fixed_string<T, Count + 1> new_fixed_string;
     copy(new_fixed_string.value, Count, Pos);
     return new_fixed_string;
   }
 
-  constexpr basic_fixed_string<T, N> substr(size_type pos = 0, size_type count = npos) const noexcept {
+  [[nodiscard]] constexpr basic_fixed_string<T, N> substr(size_type pos = 0, size_type count = npos) const noexcept {
     basic_fixed_string<T, N> new_fixed_string;
     copy(new_fixed_string.value, count, pos);
     return new_fixed_string;
   }
 
-  constexpr int compare(view str) const noexcept {
+  [[nodiscard]] constexpr int compare(view str) const noexcept {
     const std::size_t len = std::min(length(), str.length());
     const int comparison = traits_type::compare(data(), str.data(), len);
     if (comparison != 0)
@@ -157,7 +157,7 @@ struct basic_fixed_string {
     return length() < str.length() ? -1 : 1;
   }
 
-  constexpr bool starts_with(view substr) const noexcept {
+  [[nodiscard]] constexpr bool starts_with(view substr) const noexcept {
     if (substr.length() > length())
       return false;
 
@@ -169,10 +169,12 @@ struct basic_fixed_string {
     return true;
   }
 
-  constexpr bool starts_with(value_type c) const noexcept { return !empty() && traits_type::eq(front(), c); }
-  constexpr bool starts_with(const_pointer c) const noexcept { return starts_with(view(c)); }
+  [[nodiscard]] constexpr bool starts_with(value_type c) const noexcept {
+    return !empty() && traits_type::eq(front(), c);
+  }
+  [[nodiscard]] constexpr bool starts_with(const_pointer c) const noexcept { return starts_with(view(c)); }
 
-  constexpr bool ends_with(view substr) const noexcept {
+  [[nodiscard]] constexpr bool ends_with(view substr) const noexcept {
     if (substr.length() > length())
       return false;
 
@@ -185,16 +187,16 @@ struct basic_fixed_string {
     return true;
   }
 
-  constexpr bool ends_with(value_type c) const noexcept { return !empty() && traits_type::eq(back(), c); }
-  constexpr bool ends_with(const_pointer c) const noexcept { return ends_with(view(c)); }
+  [[nodiscard]] constexpr bool ends_with(value_type c) const noexcept { return !empty() && traits_type::eq(back(), c); }
+  [[nodiscard]] constexpr bool ends_with(const_pointer c) const noexcept { return ends_with(view(c)); }
 
   constexpr void swap(basic_fixed_string &other) noexcept { std::swap(value, other.value); }
 
-  inline constexpr const T *c_str() const noexcept { return value; }
-  inline constexpr const T *data() const noexcept { return value; }
-  inline constexpr std::string_view str() const noexcept { return (std::string_view) *this; }
+  [[nodiscard]] inline constexpr const T *c_str() const noexcept { return value; }
+  [[nodiscard]] inline constexpr const T *data() const noexcept { return value; }
+  [[nodiscard]] inline constexpr std::string_view str() const noexcept { return (std::string_view) *this; }
 
-  constexpr size_type find(view str, size_type pos = 0) const noexcept {
+  [[nodiscard]] constexpr size_type find(view str, size_type pos = 0) const noexcept {
     while (pos + str.length() <= length()) {
       if (traits_type::compare(value + pos, str.data(), str.length()) == 0) {
         return pos;
@@ -206,13 +208,19 @@ struct basic_fixed_string {
     return npos;
   }
 
-  constexpr size_type find(value_type c, size_type pos = 0) const noexcept { return find(view(&c, 1), pos); }
-  constexpr size_type find(const_pointer str, size_type pos = 0) const noexcept { return find(view(str), pos); }
-  constexpr size_type find(const_pointer str, size_type pos, size_type n) const noexcept {
+  [[nodiscard]] constexpr size_type find(value_type c, size_type pos = 0) const noexcept {
+    return find(view(&c, 1),
+                pos);
+  }
+  [[nodiscard]] constexpr size_type find(const_pointer str, size_type pos = 0) const noexcept {
+    return find(view(str),
+                pos);
+  }
+  [[nodiscard]] constexpr size_type find(const_pointer str, size_type pos, size_type n) const noexcept {
     return find(view(str, n), pos);
   }
 
-  constexpr size_type rfind(view str, size_type pos = npos) const noexcept {
+  [[nodiscard]] constexpr size_type rfind(view str, size_type pos = npos) const noexcept {
     pos = std::min(pos, length() - str.length());
     while (pos != npos) {
       if (traits_type::compare(value + pos, str.data(), str.length()) == 0) {
@@ -225,13 +233,18 @@ struct basic_fixed_string {
     return npos;
   }
 
-  constexpr size_type rfind(value_type c, size_type pos = npos) const noexcept { return rfind(view(&c, 1), pos); }
-  constexpr size_type rfind(const_pointer str, size_type pos = npos) const noexcept { return rfind(view(str), pos); }
-  constexpr size_type rfind(const_pointer str, size_type pos, size_type n) const noexcept {
+  [[nodiscard]] constexpr size_type rfind(value_type c, size_type pos = npos) const noexcept {
+    return rfind(view(&c, 1),
+                 pos);
+  }
+  [[nodiscard]] constexpr size_type rfind(const_pointer str, size_type pos = npos) const noexcept {
+    return rfind(view(str), pos);
+  }
+  [[nodiscard]] constexpr size_type rfind(const_pointer str, size_type pos, size_type n) const noexcept {
     return rfind(view(str, n), pos);
   }
 
-  constexpr size_type find_first_of(view str, size_type pos = 0) const noexcept {
+  [[nodiscard]] constexpr size_type find_first_of(view str, size_type pos = 0) const noexcept {
     while (pos < length()) {
       if (traits_type::find(str.data(), str.length(), value[pos]) != nullptr) {
         return pos;
@@ -243,19 +256,19 @@ struct basic_fixed_string {
     return npos;
   }
 
-  constexpr size_type find_first_of(value_type c, size_type pos = 0) const noexcept {
+  [[nodiscard]] constexpr size_type find_first_of(value_type c, size_type pos = 0) const noexcept {
     return find_first_of(view(&c, 1), pos);
   }
 
-  constexpr size_type find_first_of(const_pointer str, size_type pos = 0) const noexcept {
+  [[nodiscard]] constexpr size_type find_first_of(const_pointer str, size_type pos = 0) const noexcept {
     return find_first_of(view(str), pos);
   }
 
-  constexpr size_type find_first_of(const_pointer str, size_type pos, size_type n) const noexcept {
+  [[nodiscard]] constexpr size_type find_first_of(const_pointer str, size_type pos, size_type n) const noexcept {
     return find_first_of(view(str, n), pos);
   }
 
-  constexpr size_type find_last_of(view str, size_type pos = npos) const noexcept {
+  [[nodiscard]] constexpr size_type find_last_of(view str, size_type pos = npos) const noexcept {
     pos = std::min(pos, length() - 1);
     while (pos != npos) {
       if (traits_type::find(str.data(), str.length(), value[pos]) != nullptr) {
@@ -268,19 +281,19 @@ struct basic_fixed_string {
     return npos;
   }
 
-  constexpr size_type find_last_of(value_type c, size_type pos = npos) const noexcept {
+  [[nodiscard]] constexpr size_type find_last_of(value_type c, size_type pos = npos) const noexcept {
     return find_last_of(view(&c, 1), pos);
   }
 
-  constexpr size_type find_last_of(const_pointer str, size_type pos = npos) const noexcept {
+  [[nodiscard]] constexpr size_type find_last_of(const_pointer str, size_type pos = npos) const noexcept {
     return find_last_of(view(str), pos);
   }
 
-  constexpr size_type find_last_of(const_pointer str, size_type pos, size_type n) const noexcept {
+  [[nodiscard]] constexpr size_type find_last_of(const_pointer str, size_type pos, size_type n) const noexcept {
     return find_last_of(view(str, n), pos);
   }
 
-  constexpr size_type find_first_not_of(view str, size_type pos = 0) const noexcept {
+  [[nodiscard]] constexpr size_type find_first_not_of(view str, size_type pos = 0) const noexcept {
     while (pos < length()) {
       if (traits_type::find(str.data(), str.length(), value[pos]) == nullptr) {
         return pos;
@@ -292,19 +305,19 @@ struct basic_fixed_string {
     return npos;
   }
 
-  constexpr size_type find_first_not_of(value_type c, size_type pos = 0) const noexcept {
+  [[nodiscard]] constexpr size_type find_first_not_of(value_type c, size_type pos = 0) const noexcept {
     return find_first_not_of(view(&c, 1), pos);
   }
 
-  constexpr size_type find_first_not_of(const_pointer str, size_type pos = 0) const noexcept {
+  [[nodiscard]] constexpr size_type find_first_not_of(const_pointer str, size_type pos = 0) const noexcept {
     return find_first_not_of(view(str), pos);
   }
 
-  constexpr size_type find_first_not_of(const_pointer str, size_type pos, size_type n) const noexcept {
+  [[nodiscard]] constexpr size_type find_first_not_of(const_pointer str, size_type pos, size_type n) const noexcept {
     return find_first_not_of(view(str, n), pos);
   }
 
-  constexpr size_type find_last_not_of(view str, size_type pos = npos) const noexcept {
+  [[nodiscard]] constexpr size_type find_last_not_of(view str, size_type pos = npos) const noexcept {
     pos = std::min(pos, length() - 1);
     while (pos != npos) {
       if (traits_type::find(str.data(), str.length(), value[pos]) == nullptr) {
@@ -317,24 +330,24 @@ struct basic_fixed_string {
     return npos;
   }
 
-  constexpr size_type find_last_not_of(value_type c, size_type pos = npos) const noexcept {
+  [[nodiscard]] constexpr size_type find_last_not_of(value_type c, size_type pos = npos) const noexcept {
     return find_last_not_of(view(&c, 1), pos);
   }
 
-  constexpr size_type find_last_not_of(const_pointer str, size_type pos = npos) const noexcept {
+  [[nodiscard]] constexpr size_type find_last_not_of(const_pointer str, size_type pos = npos) const noexcept {
     return find_last_not_of(view(str), pos);
   }
 
-  constexpr size_type find_last_not_of(const_pointer str, size_type pos, size_type n) const noexcept {
+  [[nodiscard]] constexpr size_type find_last_not_of(const_pointer str, size_type pos, size_type n) const noexcept {
     return find_last_not_of(view(str, n), pos);
   }
 
-  constexpr bool contains(view substr) const noexcept {
+  [[nodiscard]] constexpr bool contains(view substr) const noexcept {
     return find(substr) != npos;
   }
 
-  constexpr bool contains(value_type c) const noexcept { return find(c) != npos; }
-  constexpr bool contains(const_pointer c) const noexcept { return contains(view(c)); }
+  [[nodiscard]] constexpr bool contains(value_type c) const noexcept { return find(c) != npos; }
+  [[nodiscard]] constexpr bool contains(const_pointer c) const noexcept { return contains(view(c)); }
 
   T value[N]{0};
 };
